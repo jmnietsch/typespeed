@@ -1,49 +1,104 @@
 package typespeed;
 
-import javax.swing.*;
-import java.awt.*;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.awt.*;
+import java.awt.image.BufferStrategy;
 
-public class Game implements Runnable{
+
+public class Game extends Canvas implements Runnable{
 	public static final String GAME_NAME = "Typespeed";
-	private static final int width = 500;
-	private static final int height = 300;
-	private final JFrame frame;
+	private static final int WIDTH = 500;
+	private static final int HEIGHT = WIDTH / 12 * 9;;
+	private static final long serialVersionUID = -333377613080388191L;
 
-	public static void main(String[] args){
-		Game game = new Game();
-
-		game.run();
-	}
+	private Thread thread;
+	private boolean running = false;
+	private Handler handler;
 
 	private Game() {
+		handler = new Handler();
 
-		frame = new JFrame(GAME_NAME);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setMinimumSize(new Dimension(width, height));
-
-		frame.pack();
-		frame.setVisible(true);
-
-		frame.setLocation(400,500);
-
-		frame.getContentPane().setLayout(null);
+		new Window(WIDTH, HEIGHT, GAME_NAME, this);
+		requestFocus();
 	}
 
 	public void run() {
-		System.out.println("Running");
+		long lastTime = System.nanoTime();
+		double amountOfTicks = 60.0;
+		double ns = 1000000000 / amountOfTicks;
+		double delta = 0;
+		long timer = System.currentTimeMillis();
+		int frames = 0;
 
-		int numTiles = 5;
+		while (running) {
+			long now = System.nanoTime();
+			delta += (now - lastTime) / ns;
+			lastTime = now;
 
-		for(int i = 0; i<numTiles; ++i){
-			int randomWordLength = (int) (Math.random() * 15);
-			addNewTile(RandomStringUtils.randomAlphabetic(randomWordLength));
+			while (delta >= 1) {
+				tick();
+				delta--;
+			}
+
+			if (running)
+				render();
+
+			frames++;
+
+			if (System.currentTimeMillis() - timer > 1000) {
+				timer = +1000;
+				System.out.println("FPS: " + frames);
+				frames = 0;
+			}
 		}
+		stop();
+	}
+
+	private void tick() {
+		handler.tick();
+	}
+
+	private void render() {
+		BufferStrategy bs = this.getBufferStrategy();
+		if (bs == null) {
+			this.createBufferStrategy(3);
+			return;
+		}
+		Graphics g = bs.getDrawGraphics();
+		g.setColor(Color.green);
+		g.fillRect(0, 0, WIDTH, HEIGHT);
+
+		handler.render(g);
+
+		g.dispose();
+		bs.show();
 	}
 
 	private void addNewTile(String name){
-		Tile t = new Tile(name, (int) (Math.random() * (height-30)));
-		frame.add(t);
+		Tile t = new Tile(name, (int) (Math.random() * (HEIGHT-30)));
+		handler.addObject(t);
 	}
+
+	synchronized void start() {
+		running = true;
+		thread = new Thread(this);
+		thread.start();
+	}
+
+	synchronized void stop() {
+		try {
+			thread.join();
+			running = false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args){
+		Game g = new Game();
+
+		g.addNewTile(RandomStringUtils.randomAlphabetic(5));
+	}
+
 }
