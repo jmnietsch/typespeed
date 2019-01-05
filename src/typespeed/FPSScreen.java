@@ -8,7 +8,7 @@ public class FPSScreen extends GameObject{
     private int fps;
 
     public FPSScreen(){
-        super(ObjectID.FPSscreen);
+        super(ObjectID.FPS);
 
         fps = 0;
         x = 5;
