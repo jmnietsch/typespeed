@@ -4,16 +4,19 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.util.Random;
 
 
 public class Game extends Canvas implements Runnable{
 	public static final String GAME_NAME = "Typespeed";
-	private static final int WIDTH = 500;
-	private static final int HEIGHT = WIDTH / 12 * 9;;
+	public static final int WIDTH = 500;
+	public static final int HEIGHT = WIDTH / 12 * 9;
+
 	private static final long serialVersionUID = -333377613080388191L;
 
 	private Thread thread;
-	private boolean running = false;
+	private static boolean running = false;
+
 	private Handler handler;
 
 	private Game() {
@@ -66,10 +69,13 @@ public class Game extends Canvas implements Runnable{
 			this.createBufferStrategy(3);
 			return;
 		}
+
+		//Define Background over full image Plane
 		Graphics g = bs.getDrawGraphics();
 		g.setColor(Color.green);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 
+		//Call Handler to render all gameObjects
 		handler.render(g);
 
 		g.dispose();
@@ -77,7 +83,9 @@ public class Game extends Canvas implements Runnable{
 	}
 
 	private void addNewTile(String name){
-		Tile t = new Tile(name, (int) (Math.random() * (HEIGHT-30)));
+		int validrange = getBounds().height - Tile.TILEHEIGHT;
+
+		Tile t = new Tile(name, (int) ( Math.random() * validrange ));
 		handler.addObject(t);
 	}
 
@@ -99,7 +107,23 @@ public class Game extends Canvas implements Runnable{
 	public static void main(String[] args){
 		Game g = new Game();
 
-		g.addNewTile(RandomStringUtils.randomAlphabetic(5));
+		Random r = new Random(0);
+		long startTime = System.currentTimeMillis();
+		while(running){
+			long curTime = System.currentTimeMillis();
+			int objectCount = g.getHandler().getObjectCount();
+
+			long timedelta = (curTime - startTime) / 1000;
+
+			if(objectCount < 25 && timedelta > objectCount)
+				g.addNewTile(RandomStringUtils.randomAlphabetic(r.nextInt(6)+1));
+		}
+
 	}
+
+	public Handler getHandler() {
+		return handler;
+	}
+
 
 }
