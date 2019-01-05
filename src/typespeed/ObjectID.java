@@ -1,6 +1,8 @@
 package typespeed;
 
 public enum ObjectID {
-	Tile(),
-	UICounter()
+	Tile,
+	UICounter,
+    FPSscreen,
+	Inputline
 }

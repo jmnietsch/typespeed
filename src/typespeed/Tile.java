@@ -16,14 +16,15 @@ class Tile extends GameObject {
 	}
 
 	String text;
-	int length = 0;
+	int length;
 
 	private final int tileId;
 	private static volatile int counter = 0;
 
 	public Tile(String text, int posY) {
-		setText(text);
+        super(ObjectID.Tile);
 
+        setText(text);
 		Canvas c = new Canvas();
 		FontMetrics fm = c.getFontMetrics(TILEFONT);
 
@@ -35,11 +36,6 @@ class Tile extends GameObject {
 
 		speedX = 1.0f;
 		y = posY;
-
-		//Snap to Lines, defined by TILEHEIGHT
-		//y = y - (y % TILEHEIGHT);
-
-		//y = Math.min(y, Game.gameInstance.getBounds().height - Tile.TILEHEIGHT);
 
 		System.out.println("Create " + toString() + " at posY " + posY);
 	}
@@ -56,13 +52,9 @@ class Tile extends GameObject {
 	@Override
 	public void render(Graphics g) {
 		g.setFont(TILEFONT);
-
-		if( x+length >= Game.WIDTH)
-			length -= ((length - 1) % Game.WIDTH);
-
 		g.setColor(Color.magenta);
-		g.fillRect((int)x, (int)y, length, TILEHEIGHT);
 
+		g.fillRect((int)x, (int)y, (int)Math.min(length, (Game.WIDTH-x)), TILEHEIGHT);
 		g.setColor(Color.BLACK);
 
 		//Now draw the String, with a leading space
@@ -70,7 +62,7 @@ class Tile extends GameObject {
 	}
 
 	boolean hasReachedEnd(){
-		return (length > 0 && x + length >= Game.WIDTH);
+		return (length > 0 && x > Game.WIDTH);
 	}
 
 	@Override

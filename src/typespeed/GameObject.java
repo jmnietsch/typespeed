@@ -7,9 +7,13 @@ public abstract class GameObject {
 	protected float y;
 	protected float speedX;
 	protected float speedY;
-	protected ObjectID id;
+    protected final ObjectID id;
 
-	public float getX() {
+    protected GameObject(ObjectID id) {
+        this.id = id;
+    }
+
+    public float getX() {
 		return x;
 	}
 
@@ -43,10 +47,6 @@ public abstract class GameObject {
 
 	public ObjectID getId() {
 		return id;
-	}
-
-	public void setId(ObjectID id) {
-		this.id = id;
 	}
 
 	public abstract void tick();

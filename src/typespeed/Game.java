@@ -18,9 +18,13 @@ public class Game extends Canvas implements Runnable{
 	private static boolean running = false;
 
 	private Handler handler;
+	private FPSScreen fps;
 
 	private Game() {
 		handler = new Handler();
+
+        fps = new FPSScreen();
+        handler.addObject(fps);
 
 		new Window(WIDTH, HEIGHT, GAME_NAME, this);
 		requestFocus();
@@ -52,7 +56,7 @@ public class Game extends Canvas implements Runnable{
 			long curTime = System.currentTimeMillis();
 			if (curTime - timer > 1000) {
 				timer = curTime - (curTime % 1000);
-				System.out.println("FPS: " + frames);
+                fps.setFps(frames);
 				frames = 0;
 			}
 		}
@@ -112,13 +116,14 @@ public class Game extends Canvas implements Runnable{
 
 		Random r = new Random(0);
 		long startTime = System.currentTimeMillis();
+
 		while(running){
 			long curTime = System.currentTimeMillis();
-			int objectCount = g.getHandler().getObjectCount();
+			int objectCount = g.getHandler().getTileCount();
 
-			long timedelta = (curTime - startTime) / 1000;
+			long bigtick = 1 + (curTime - startTime) / 1000;
 
-			if(objectCount < 25 && timedelta > objectCount)
+			if(objectCount < 25 && bigtick > objectCount)
 				g.addNewTile(RandomStringUtils.randomAlphabetic(r.nextInt(6)+1));
 		}
 

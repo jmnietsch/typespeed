@@ -15,6 +15,7 @@ public class UICounter extends GameObject{
     private static final Font TIMEFONT = new Font("Arial", Font.BOLD, 24);
 
     public UICounter(){
+        super(ObjectID.UICounter);
 
         //Coordinate somewhere upper right corner
         Canvas c = new Canvas();

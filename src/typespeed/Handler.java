@@ -44,4 +44,8 @@ public class Handler {
 	public int getObjectCount(){
 		return gameObjects.size();
 	}
+
+    public synchronized int getTileCount(){
+        return gameObjects.stream().filter(obj -> obj instanceof Tile).toArray().length;
+    }
 }
