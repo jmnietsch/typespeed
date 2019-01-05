@@ -3,25 +3,25 @@ package typespeed;
 import java.awt.*;
 
 public abstract class GameObject {
-	protected int x;
-	protected int y;
+	protected float x;
+	protected float y;
 	protected float speedX;
 	protected float speedY;
 	protected ObjectID id;
 
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(float y) {
 		this.y = y;
 	}
 
@@ -29,7 +29,7 @@ public abstract class GameObject {
 		return speedX;
 	}
 
-	public void setSpeedX(int speedX) {
+	public void setSpeedX(float speedX) {
 		this.speedX = speedX;
 	}
 
@@ -37,7 +37,7 @@ public abstract class GameObject {
 		return speedY;
 	}
 
-	public void setSpeedY(int speedY) {
+	public void setSpeedY(float speedY) {
 		this.speedY = speedY;
 	}
 
