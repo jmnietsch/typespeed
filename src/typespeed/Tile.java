@@ -5,7 +5,7 @@ import java.awt.*;
 class Tile extends GameObject {
 	public static final int TILEHEIGHT = 30;
 	public static final int TEXTPOS = (int) (TILEHEIGHT * 0.6);
-	public static final Font TILEFONT = new Font("Arial", Font.PLAIN,12);;
+	public static final Font TILEFONT = new Font("Arial", Font.PLAIN,12);
 
 	public String getText() {
 		return text;

@@ -107,6 +107,9 @@ public class Game extends Canvas implements Runnable{
 	public static void main(String[] args){
 		Game g = new Game();
 
+		UICounter counter = new UICounter();
+		g.getHandler().addObject(counter);
+
 		Random r = new Random(0);
 		long startTime = System.currentTimeMillis();
 		while(running){
