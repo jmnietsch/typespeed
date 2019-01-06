@@ -15,10 +15,13 @@ public class Game extends Canvas implements Runnable{
 	private static boolean running = false;
 
 	private Handler handler;
+    Rangefinder rangefinder;
 
 	private Game() {
 		handler = new Handler(this);
 
+		rangefinder = new Rangefinder();
+        handler.addObject(rangefinder);
 
         handler.addObject(new UIStats());
 
@@ -30,14 +33,14 @@ public class Game extends Canvas implements Runnable{
 
 		handler.addObject(new UICounter());
 
-		long startTime = System.currentTimeMillis();
-		requestFocus();
+//		long startTime = System.currentTimeMillis();
+//		requestFocus();
+//		while(running){
+//			long curTime = System.currentTimeMillis();
+//			long bigtick = 1 + (curTime - startTime) / 1000;
+//		}
 
-		while(running){
-			long curTime = System.currentTimeMillis();
-			long bigtick = 1 + (curTime - startTime) / 1000;
-		}
-	}
+    }
 
 	public void run() {
 		long lastTime = System.nanoTime();
@@ -75,7 +78,7 @@ public class Game extends Canvas implements Runnable{
 
 	private void bigtick() {
 		int objectCount = handler.getTileCount();
-		int maxObjects = 5;
+		int maxObjects = 50;
 
 		if(objectCount < maxObjects){
 			addNewTile(DictionaryService.getRandomString());
@@ -105,7 +108,7 @@ public class Game extends Canvas implements Runnable{
 	private void addNewTile(String name){
 		int validrange = getBounds().height - Tile.TILEHEIGHT - Inputline.LINEHEIGHT;
 
-		Tile t = new Tile(name, (int) ( Math.random() * validrange ));
+		Tile t = new Tile(name, (int) ( rangefinder.getNextPosition() * validrange ));
 		handler.addObject(t);
 	}
 
