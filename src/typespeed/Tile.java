@@ -6,6 +6,7 @@ class Tile extends GameObject {
 	public static final int TILEHEIGHT = 30;
 	public static final int TEXTPOS = (int) (TILEHEIGHT * 0.6);
 	public static final Font TILEFONT = new Font("Arial", Font.PLAIN,12);
+	private boolean solved;
 
 	public String getText() {
 		return text;
@@ -36,6 +37,8 @@ class Tile extends GameObject {
 
 		speedX = 0.5f;
 		y = posY;
+
+		resetSolved();
 
 //		System.out.println("Create " + toString() + " at posY " + posY);
 	}
@@ -73,5 +76,17 @@ class Tile extends GameObject {
 
 	public int getTileId() {
 		return tileId;
+	}
+
+	public void markAsSolved() {
+		solved = true;
+	}
+
+	public void resetSolved() {
+		solved = false;
+	}
+
+	public boolean isSolved() {
+		return solved;
 	}
 }
