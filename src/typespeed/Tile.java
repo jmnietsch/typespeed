@@ -53,22 +53,30 @@ class Tile extends GameObject {
 		g.setFont(TILEFONT);
 		g.setColor(Color.magenta);
 
-		g.fillRect((int)x, (int)y, (int)Math.min(length, (Game.WIDTH-x)), TILEHEIGHT);
+		g.fillRect(getCurX(), getCurY(), (int)Math.min(length, (Game.WIDTH-x)), TILEHEIGHT);
 		g.setColor(Color.BLACK);
 
 		//Now draw the String, with a leading space
-		g.drawString(" " + text, (int)x, (int)y + TEXTPOS);
+		g.drawString(" " + text, getCurX(), getCurY() + TEXTPOS);
 	}
 
 	boolean hasReachedEnd(){
 		return (length > 0 && x > Game.WIDTH);
 	}
 
-	@Override
+    private int getCurX(){
+        return Math.round(x);
+    }
+
+    private int getCurY(){
+        return Math.round(y);
+    }
+
+    @Override
 	public String toString() {
 		return "Tile{" +
 				"[" + tileId + "]" +
-				"[x:" + (int)x + "|y:" + (int)y + "]" +
+				"[x:" + getCurX() + "|y:" + getCurY() + "]" +
 				"(" + length + ") -> " +
 				"'" + text + '\'' +
 				"}";
