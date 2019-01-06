@@ -15,35 +15,28 @@ public class Game extends Canvas implements Runnable{
 	private static boolean running = false;
 
 	private Handler handler;
-	private UIStats fps;
 
 	private Game() {
 		handler = new Handler(this);
 
-        fps = new UIStats();
-        handler.addObject(fps);
+
+        handler.addObject(new UIStats());
 
         Inputline inputline = new Inputline(handler);
-
         handler.addObject(inputline);
         this.addKeyListener(inputline);
 
 		new Window(WIDTH, HEIGHT, GAME_NAME, this);
 
-		UICounter counter = new UICounter();
-		handler.addObject(counter);
+		handler.addObject(new UICounter());
 
 		long startTime = System.currentTimeMillis();
 		requestFocus();
 
 		while(running){
 			long curTime = System.currentTimeMillis();
-
-
 			long bigtick = 1 + (curTime - startTime) / 1000;
-
 		}
-
 	}
 
 	public void run() {
@@ -52,8 +45,6 @@ public class Game extends Canvas implements Runnable{
 		double ns = 1000000000 / amountOfTicks;
 		double delta = 0;
 		double bigDelta = 500;
-		long timer = System.currentTimeMillis();
-		int frames = 0;
 
 		while (running) {
 			long now = System.nanoTime();
@@ -74,14 +65,6 @@ public class Game extends Canvas implements Runnable{
 			if (running)
 				render();
 
-			frames++;
-
-			long curTime = System.currentTimeMillis();
-			if (curTime - timer > 1000) {
-				timer = curTime - (curTime % 1000);
-                fps.setFps(frames);
-				frames = 0;
-			}
 		}
 		stop();
 	}

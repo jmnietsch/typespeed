@@ -5,9 +5,11 @@ import java.awt.*;
 public class UIStats extends GameObject{
 
     private static final Font FPSFONT = new Font("Arial", Font.PLAIN, 10);
-    private int fps;
 
+    private int fps;
     private long ticks;
+    private int framesTmp;
+    long timer = System.currentTimeMillis();
 
     public UIStats(){
         super(ObjectID.UIStats);
@@ -17,6 +19,8 @@ public class UIStats extends GameObject{
 
         x = 5;
         y = 15;
+
+        framesTmp = 0;
     }
 
     @Override
@@ -26,13 +30,26 @@ public class UIStats extends GameObject{
 
     @Override
     public void render(Graphics g) {
+        framesTmp++;
+
+        long curTime = System.currentTimeMillis();
+        if (curTime - timer > 1000) {
+            timer = curTime - (curTime % 1000);
+
+            fps = framesTmp;
+            framesTmp = 0;
+        }
+
         g.setColor(Color.BLACK);
         g.setFont(FPSFONT);
 
-        String stringbuffer = "Fps:" + '\t' + this.fps + "\n" +
+        //Generating Text Output Scheme
+        String buffer =
+                "Fps:" + '\t' + this.fps + "\n" +
                 "Ticks:"+ '\t' + this.ticks + "\n";
 
-        String[] lines = stringbuffer.split("\n");
+        //Draw Text separated in Lines and Tab-Parts
+        String[] lines = buffer.split("\n");
 
         int lineNr = 0;
         for (String line : lines){
@@ -46,9 +63,5 @@ public class UIStats extends GameObject{
 
             lineNr++;
         }
-    }
-
-    public void setFps(int frames) {
-        fps = frames;
     }
 }
