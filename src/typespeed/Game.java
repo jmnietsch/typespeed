@@ -15,12 +15,12 @@ public class Game extends Canvas implements Runnable{
 	private static boolean running = false;
 
 	private Handler handler;
-	private FPSScreen fps;
+	private UIStats fps;
 
 	private Game() {
 		handler = new Handler(this);
 
-        fps = new FPSScreen();
+        fps = new UIStats();
         handler.addObject(fps);
 
         Inputline inputline = new Inputline(handler);
@@ -29,7 +29,21 @@ public class Game extends Canvas implements Runnable{
         this.addKeyListener(inputline);
 
 		new Window(WIDTH, HEIGHT, GAME_NAME, this);
+
+		UICounter counter = new UICounter();
+		handler.addObject(counter);
+
+		long startTime = System.currentTimeMillis();
 		requestFocus();
+
+		while(running){
+			long curTime = System.currentTimeMillis();
+
+
+			long bigtick = 1 + (curTime - startTime) / 1000;
+
+		}
+
 	}
 
 	public void run() {
@@ -37,17 +51,24 @@ public class Game extends Canvas implements Runnable{
 		double amountOfTicks = 60.0;
 		double ns = 1000000000 / amountOfTicks;
 		double delta = 0;
+		double bigDelta = 500;
 		long timer = System.currentTimeMillis();
 		int frames = 0;
 
 		while (running) {
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
+			bigDelta += delta;
 			lastTime = now;
 
 			while (delta >= 1) {
 				tick();
 				delta--;
+			}
+
+			if (bigDelta >= 500){
+				bigtick();
+				bigDelta -= 500;
 			}
 
 			if (running)
@@ -67,6 +88,16 @@ public class Game extends Canvas implements Runnable{
 
 	private void tick() {
 		handler.tick();
+	}
+
+	private void bigtick() {
+		int objectCount = handler.getTileCount();
+		int maxObjects = 5;
+
+		if(objectCount < maxObjects){
+			addNewTile(DictionaryService.getRandomString());
+		}
+
 	}
 
 	private void render() {
@@ -89,7 +120,7 @@ public class Game extends Canvas implements Runnable{
 	}
 
 	private void addNewTile(String name){
-		int validrange = getBounds().height - Tile.TILEHEIGHT;
+		int validrange = getBounds().height - Tile.TILEHEIGHT - Inputline.LINEHEIGHT;
 
 		Tile t = new Tile(name, (int) ( Math.random() * validrange ));
 		handler.addObject(t);
@@ -112,24 +143,6 @@ public class Game extends Canvas implements Runnable{
 
 	public static void main(String[] args){
 		Game g = new Game();
-
-		UICounter counter = new UICounter();
-		g.getHandler().addObject(counter);
-
-		DictionaryService dictionary = new DictionaryService();
-
-		long startTime = System.currentTimeMillis();
-
-		while(running){
-			long curTime = System.currentTimeMillis();
-			int objectCount = g.getHandler().getTileCount();
-
-			long bigtick = 1 + (curTime - startTime) / 1000;
-
-			if(objectCount < 25 && bigtick > objectCount){
-                g.addNewTile(dictionary.getRandomString());
-            }
-		}
 	}
 
 	public Handler getHandler() {
