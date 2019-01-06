@@ -34,19 +34,15 @@ class Tile extends GameObject {
 		//Set Id Value. Update counter
 		tileId = counter++;
 
-		speedX = 1.0f;
+		speedX = 0.5f;
 		y = posY;
 
-		System.out.println("Create " + toString() + " at posY " + posY);
+//		System.out.println("Create " + toString() + " at posY " + posY);
 	}
 
 	@Override
 	public void tick() {
 		x += speedX;
-
-		if(hasReachedEnd()){
-			System.out.println("Destr  " + toString());
-		}
 	}
 
 	@Override
