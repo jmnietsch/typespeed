@@ -2,6 +2,8 @@ package typespeed;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Handler {
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
@@ -15,14 +17,17 @@ public class Handler {
 		for(GameObject game : gameObjects){
 			game.tick();
 		}
-	}
 
-	public synchronized void render(Graphics g){
+		ArrayList<GameObject> completedObjects = new ArrayList<>();
 		ArrayList<GameObject> removeObjects = new ArrayList<>();
-
 		for(GameObject game : gameObjects){
 			if(game instanceof Tile){
 				Tile t = (Tile) game;
+
+				if(t.isSolved()){
+					completedObjects.add(t);
+					continue;
+				}
 
 				if(t.hasReachedEnd()) {
 					removeObjects.add(t);
@@ -30,10 +35,23 @@ public class Handler {
 				}
 			}
 
-			game.render(g);
+
 		}
 
-		for(GameObject game : removeObjects){
+		cleanup(completedObjects);
+		cleanup(removeObjects);
+
+	}
+
+	public synchronized void render(Graphics g){
+
+		for(GameObject game : gameObjects){
+			game.render(g);
+		}
+    }
+
+	private void cleanup(ArrayList<GameObject> clearObjects) {
+		for(GameObject game : clearObjects){
 			removeObject(game);
 		}
 	}
@@ -43,15 +61,23 @@ public class Handler {
 	}
 
 	public synchronized void removeObject(GameObject gameObject){
-		gameObjects.remove(gameObject);
+    	if(gameObjects.contains(gameObject))
+			gameObjects.remove(gameObject);
 	}
 
 	public synchronized int getObjectCount(){
 		return gameObjects.size();
 	}
 
+	public synchronized List<Tile> getTiles(){
+		return gameObjects
+				.stream().filter(Tile.class::isInstance)
+				.map(Tile.class::cast)
+				.collect(Collectors.toList());
+	}
+
     public synchronized int getTileCount(){
-        return gameObjects.stream().filter(obj -> obj instanceof Tile).toArray().length;
+        return getTiles().size();
     }
 
     public Game getGame() {
