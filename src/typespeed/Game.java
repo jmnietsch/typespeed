@@ -1,10 +1,7 @@
 package typespeed;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.util.Random;
 
 
 public class Game extends Canvas implements Runnable{
@@ -114,7 +111,8 @@ public class Game extends Canvas implements Runnable{
 		UICounter counter = new UICounter();
 		g.getHandler().addObject(counter);
 
-		Random r = new Random(0);
+		DictionaryService dictionary = new DictionaryService();
+
 		long startTime = System.currentTimeMillis();
 
 		while(running){
@@ -123,15 +121,14 @@ public class Game extends Canvas implements Runnable{
 
 			long bigtick = 1 + (curTime - startTime) / 1000;
 
-			if(objectCount < 25 && bigtick > objectCount)
-				g.addNewTile(RandomStringUtils.randomAlphabetic(r.nextInt(6)+1));
+			if(objectCount < 25 && bigtick > objectCount){
+                g.addNewTile(dictionary.getRandomString());
+            }
 		}
-
 	}
 
 	public Handler getHandler() {
 		return handler;
 	}
-
 
 }
