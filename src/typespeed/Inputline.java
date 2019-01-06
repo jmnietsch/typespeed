@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class Inputline extends GameObject implements KeyListener {
     private static final Font TEXTFONT = new Font("Arial", Font.PLAIN, 10);
+    public static final int LINEHEIGHT = 30;
 
     private Handler handler;
     private String input;
@@ -74,7 +75,7 @@ public class Inputline extends GameObject implements KeyListener {
         g.setFont(TEXTFONT);
         g.setColor(Color.GRAY);
 
-        g.fillRect(0, (int) (handler.getGame().getBounds().getHeight() - 30), (int) handler.getGame().getBounds().getWidth(), 30);
+        g.fillRect(0, (int) (handler.getGame().getBounds().getHeight() - LINEHEIGHT), (int) handler.getGame().getBounds().getWidth(), LINEHEIGHT);
 
         g.setColor(Color.BLACK);
         g.drawString(input, 0, (int) (handler.getGame().getBounds().getHeight() - 10));
