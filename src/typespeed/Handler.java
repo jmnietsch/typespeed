@@ -4,9 +4,14 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Handler {
-	ArrayList<GameObject> gameObjects = new ArrayList<>();
+    private ArrayList<GameObject> gameObjects = new ArrayList<>();
+	private Game game;
 
-	public synchronized void tick(){
+    public Handler(Game game) {
+        this.game = game;
+    }
+
+    public synchronized void tick(){
 		for(GameObject game : gameObjects){
 			game.tick();
 		}
@@ -41,11 +46,15 @@ public class Handler {
 		gameObjects.remove(gameObject);
 	}
 
-	public int getObjectCount(){
+	public synchronized int getObjectCount(){
 		return gameObjects.size();
 	}
 
     public synchronized int getTileCount(){
         return gameObjects.stream().filter(obj -> obj instanceof Tile).toArray().length;
+    }
+
+    public Game getGame() {
+        return game;
     }
 }

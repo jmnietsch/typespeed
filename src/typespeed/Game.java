@@ -18,10 +18,15 @@ public class Game extends Canvas implements Runnable{
 	private FPSScreen fps;
 
 	private Game() {
-		handler = new Handler();
+		handler = new Handler(this);
 
         fps = new FPSScreen();
         handler.addObject(fps);
+
+        Inputline inputline = new Inputline(handler);
+
+        handler.addObject(inputline);
+        this.addKeyListener(inputline);
 
 		new Window(WIDTH, HEIGHT, GAME_NAME, this);
 		requestFocus();
