@@ -3,6 +3,9 @@ package typespeed;
 import java.awt.*;
 
 class Tile extends GameObject {
+	//If True: Display gaussian curves used for cost calculation for next position.
+	private static final boolean DEBUG_VISUALIZATION = false;
+
 	public static final int TILEHEIGHT = 30;
 	public static final int TEXTPOS = (int) (TILEHEIGHT * 0.6);
 	public static final Font TILEFONT = new Font("Arial", Font.PLAIN,12);
@@ -50,6 +53,8 @@ class Tile extends GameObject {
 
 	@Override
 	public void render(Graphics g) {
+		if(DEBUG_VISUALIZATION) return;
+
 		g.setFont(TILEFONT);
 		g.setColor(Color.magenta);
 

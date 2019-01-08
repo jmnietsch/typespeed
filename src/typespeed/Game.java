@@ -17,6 +17,8 @@ public class Game extends Canvas implements Runnable{
 	private Handler handler;
     Rangefinder rangefinder;
 
+    private static Game game;
+
 	private Game() {
 		handler = new Handler(this);
 
@@ -106,7 +108,8 @@ public class Game extends Canvas implements Runnable{
 	}
 
 	private void addNewTile(String name){
-		int validrange = getBounds().height - Tile.TILEHEIGHT - Inputline.LINEHEIGHT;
+
+		int validrange = getScreenheight();
 
 		Tile t = new Tile(name, (int) ( rangefinder.getNextPosition() * validrange ));
 		handler.addObject(t);
@@ -128,11 +131,15 @@ public class Game extends Canvas implements Runnable{
 	}
 
 	public static void main(String[] args){
-		Game g = new Game();
+		game = new Game();
 	}
 
 	public Handler getHandler() {
 		return handler;
+	}
+
+	public static int getScreenheight(){
+		return game.getBounds().height - Tile.TILEHEIGHT - Inputline.LINEHEIGHT;
 	}
 
 }
