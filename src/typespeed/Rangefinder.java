@@ -28,7 +28,7 @@ public class Rangefinder extends GameObject{
     private ArrayList<Gaussian> gaussianId;
 
     //The default Gauss will slightly reduce the Cost in the center.
-    private static final Gaussian defaultGausian = new Gaussian(0.5, 0.5);
+    private static final Gaussian defaultGaussian = new Gaussian(0.5, 0.5);
 
 
     Rangefinder() {
@@ -115,7 +115,7 @@ public class Rangefinder extends GameObject{
 
             //Adds all Values except the default one. That is subtracted.
             for (int t = 0; t < yList.size(); t++) {
-                int factor = (gaussian.equals(defaultGausian)) ? -1 : 1;
+                int factor = (gaussian.equals(defaultGaussian)) ? -1 : 1;
 
                 xSumList.set(t, xSumList.get(t) + factor * xList.get(t));
             }
@@ -178,7 +178,7 @@ public class Rangefinder extends GameObject{
     }
 
     private Gaussian getGaussian(int id){
-        if (id < 0) return defaultGausian;
+        if (id < 0) return defaultGaussian;
 
         return gaussianId.get(id);
     }
@@ -237,7 +237,7 @@ public class Rangefinder extends GameObject{
         }
 
         //The Default Curve will improve the Chances in the Center for new Values.
-        double defaultBonus = defaultGausian.value(possiblePosition);
+        double defaultBonus = defaultGaussian.value(possiblePosition);
         costForSampledPosition -= amplitudeFactor * defaultBonus;
 
         return costForSampledPosition;
