@@ -11,24 +11,24 @@ public class Rangefinder extends GameObject{
     private static final boolean DEBUG_VISUALIZATION = false;
 
     //The Amount of Random positions, that will be looked at for their cost. The cheapest one will be used.
-    private final static int AMOUNT_POSITIONS = 100;
+    private final static int AMOUNT_POSITIONS = 10;
     private double[] positions = new double[Rangefinder.AMOUNT_POSITIONS];
 
     //Scales display of gaussian Curves in horizontal direction (for better visibility)
-    private static final float DEFAULT_GAUSSIAN_SCALING = 1;
+    private static final float DEFAULT_GAUSSIAN_SCALING = 100;
 
     //Scale the y samplings of gaussian curve.
     private static final int DEFAULT_SCREEN_HEIGHT = 1;
 
     //The basic Amount of Ticks, a gaussian is alive. The actual value will be a random multiple of this.
-    private static final int LIFETICKS = 250;
+    private static final int LIFETICKS = 300;
 
     //Track the remaining lifespan of any gaussian and document all "live" gaussians in the ID array.
     private Map<Gaussian, Integer> lifespan;
     private ArrayList<Gaussian> gaussianId;
 
     //The default Gauss will slightly reduce the Cost in the center.
-    private static final Gaussian defaultGaussian = new Gaussian(0.5, 0.5);
+    private static final Gaussian defaultGaussian = new Gaussian(0.5, 0.3);
 
 
     Rangefinder() {
@@ -52,21 +52,18 @@ public class Rangefinder extends GameObject{
                 lifespan.put(gaussian, remainingLife - lifeReduction);
 
                 //Remove if to be considered dead.
-                if(remainingLife < 0){
+                if(remainingLife < 0)
                     deadGaussianList.add(gaussian);
-                }
-            } else {
 
+            } else {
                 //The Gaussian is not in the life-list. Remove also from Index.
                 deadGaussianList.add(gaussian);
             }
-
         }
 
         //Remove gaussian from tracked Structures.
         for(Gaussian gaussian : deadGaussianList){
-            lifespan.remove(gaussian);
-            gaussianId.remove(gaussian);
+            removeGaussian(gaussian);
         }
     }
 
@@ -115,7 +112,7 @@ public class Rangefinder extends GameObject{
 
             //Adds all Values except the default one. That is subtracted.
             for (int t = 0; t < yList.size(); t++) {
-                int factor = (gaussian.equals(defaultGaussian)) ? -1 : 1;
+                float factor = (gaussian.equals(defaultGaussian)) ? -0.2f : 1.0f;
 
                 xSumList.set(t, xSumList.get(t) + factor * xList.get(t));
             }
@@ -145,9 +142,11 @@ public class Rangefinder extends GameObject{
                 yListScaled.stream().mapToDouble(i -> i).mapToInt(i -> (int) i).toArray(),
                 xList.size());
     }
+
     private void drawGaussianPoly(Graphics g, ArrayList<Float> xList, ArrayList<Float> yList) {
         drawGaussianPoly(g, xList, yList, DEFAULT_SCREEN_HEIGHT);
     }
+
     private void drawGaussianPoly(Graphics g, ArrayList<Float> xList, ArrayList<Float> yList, float height) {
         drawGaussianPoly(g, xList, yList, height, DEFAULT_GAUSSIAN_SCALING);
     }
@@ -159,9 +158,14 @@ public class Rangefinder extends GameObject{
         int lifeticks = lifespan.getOrDefault(gaussian, LIFETICKS);
         float amplitude = (float)lifeticks / LIFETICKS;
 
+        amplitude = Math.round(amplitude*50) / 50.0f; //Rounding to a precision of 0.02
+
+        if(amplitude > 0.85) amplitude *= 2;
+        if(amplitude > 0.60) amplitude *= 2;
+
         //For each point along the y axis, query the matching gaussian probability.
         for(float point : yList){
-            float xPos = (float) (amplitude * gaussian.value(point));
+            float xPos = (float) (amplitude * 20 * gaussian.value(point));
             xList.add(xPos);
         }
 
@@ -175,12 +179,6 @@ public class Rangefinder extends GameObject{
             positions[i] = random.nextFloat();
         }
         Arrays.sort(positions);
-    }
-
-    private Gaussian getGaussian(int id){
-        if (id < 0) return defaultGaussian;
-
-        return gaussianId.get(id);
     }
 
     /**
@@ -202,19 +200,12 @@ public class Rangefinder extends GameObject{
         double minimalCost = Collections.min(costMap.values());
 
         //Determine the matching position to this cost
-        for(double cost : costMap.keySet()){
-            if(costMap.get(cost).equals(minimalCost)){
-                //Compute Random scaling Factor between 1 and 10 for the Lifetime
-                int factor = new Random().nextInt(9) + 1;
+        for(double position : costMap.keySet()){
+            if(costMap.get(position).equals(minimalCost)){
+                System.out.printf("%.2f: %3.2f\n", position, minimalCost);
+                addGaussian(position);
 
-                //Generate a new Gaussian at this position, that will increase the future cost //Selected sigma = 0.2 for its tight curve
-                Gaussian g = new Gaussian(cost, 0.1);
-
-                //Add gaussian with its given Lifespan to the List of gaussians involved in the cost calculation and add to index.
-                lifespan.put(g, factor*LIFETICKS);
-                gaussianId.add(g);
-
-                return cost;
+                return position;
             }
         }
 
@@ -222,23 +213,47 @@ public class Rangefinder extends GameObject{
         return 0.5f;
     }
 
+    private Gaussian getGaussian(int id){
+        if (id < 0) return defaultGaussian;
+
+        return gaussianId.get(id);
+    }
+
+    private void addGaussian(double position) {
+        if(position < 0.1) position = 0.0;
+        if(position > 0.9) position = 1.0;
+
+        //Generate a new Gaussian at this position, that will increase the future cost //Selected sigma = 0.2 for its tight curve
+        Gaussian g = new Gaussian(position, 0.2);
+
+        //Add gaussian with its given Lifespan to the List of gaussians involved in the cost calculation and add to index.
+        lifespan.put(g, LIFETICKS);
+        gaussianId.add(g);
+    }
+
+    private void removeGaussian(Gaussian gaussian) {
+        lifespan.remove(gaussian);
+        gaussianId.remove(gaussian);
+    }
+
     private double sampleAllGaussianCostsAt(double possiblePosition) {
 
         double costForSampledPosition = 0.0;
-        final int amplitudeFactor = 100;
 
         for(Gaussian gaussian : lifespan.keySet()){
             int lifeticks = lifespan.get(gaussian);
+
             float amplitude = (float)lifeticks / LIFETICKS;
+            amplitude = Math.max(amplitude, 1);
 
-            double reducingValue = gaussian.value(possiblePosition);
+            double costForPosition = gaussian.value(possiblePosition);
 
-            costForSampledPosition += amplitudeFactor * amplitude*reducingValue;
+            costForSampledPosition += amplitude * costForPosition;
         }
 
         //The Default Curve will improve the Chances in the Center for new Values.
         double defaultBonus = defaultGaussian.value(possiblePosition);
-        costForSampledPosition -= amplitudeFactor * defaultBonus;
+        costForSampledPosition -= defaultBonus;
 
         return costForSampledPosition;
     }

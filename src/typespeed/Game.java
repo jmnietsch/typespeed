@@ -17,7 +17,7 @@ public class Game extends Canvas implements Runnable{
 	private Handler handler;
     Rangefinder rangefinder;
 
-    private static Game game;
+    private static Game game = new Game();
 
 	private Game() {
 		handler = new Handler(this);
@@ -62,9 +62,9 @@ public class Game extends Canvas implements Runnable{
 				delta--;
 			}
 
-			if (bigDelta >= 500){
+			if (bigDelta >= 1000){
 				bigtick();
-				bigDelta -= 500;
+				bigDelta -= 1000;
 			}
 
 			if (running)
@@ -80,7 +80,7 @@ public class Game extends Canvas implements Runnable{
 
 	private void bigtick() {
 		int objectCount = handler.getTileCount();
-		int maxObjects = 50;
+		int maxObjects = 30;
 
 		if(objectCount < maxObjects){
 			addNewTile(DictionaryService.getRandomString());
@@ -131,7 +131,7 @@ public class Game extends Canvas implements Runnable{
 	}
 
 	public static void main(String[] args){
-		game = new Game();
+
 	}
 
 	public Handler getHandler() {
