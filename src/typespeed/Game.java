@@ -5,44 +5,33 @@ import java.awt.image.BufferStrategy;
 
 
 public class Game extends Canvas implements Runnable{
-	public static final String GAME_NAME = "Typespeed";
-	public static final int WIDTH = 500;
-	public static final int HEIGHT = WIDTH / 12 * 9;
 
 	private static final long serialVersionUID = -333377613080388191L;
 
 	private Thread thread;
 	private static boolean running = false;
 
+    private Rangefinder rangefinder;
+	private UIStats uistats;
 	private Handler handler;
-    Rangefinder rangefinder;
 
-    private static Game game = new Game();
-
-	private Game() {
+	Game() {
 		handler = new Handler(this);
 
 		rangefinder = new Rangefinder();
-        handler.addObject(rangefinder);
+		handler.addObject(rangefinder);
 
-        handler.addObject(new UIStats());
+		uistats = new UIStats();
+		handler.addObject(uistats);
 
-        Inputline inputline = new Inputline(handler);
-        handler.addObject(inputline);
-        this.addKeyListener(inputline);
-
-		new Window(WIDTH, HEIGHT, GAME_NAME, this);
+		Inputline inputline = new Inputline(handler);
+		handler.addObject(inputline);
+		this.addKeyListener(inputline);
 
 		handler.addObject(new UICounter());
 
-//		long startTime = System.currentTimeMillis();
-//		requestFocus();
-//		while(running){
-//			long curTime = System.currentTimeMillis();
-//			long bigtick = 1 + (curTime - startTime) / 1000;
-//		}
-
-    }
+		this.setVisible(true);
+	}
 
 	public void run() {
 		long lastTime = System.nanoTime();
@@ -79,16 +68,17 @@ public class Game extends Canvas implements Runnable{
 	}
 
 	private void bigtick() {
+
 		int objectCount = handler.getTileCount();
 		int maxObjects = 30;
 
 		if(objectCount < maxObjects){
 			addNewTile(DictionaryService.getRandomString());
 		}
-
 	}
 
 	private void render() {
+
 		BufferStrategy bs = this.getBufferStrategy();
 		if (bs == null) {
 			this.createBufferStrategy(3);
@@ -97,8 +87,10 @@ public class Game extends Canvas implements Runnable{
 
 		//Define Background over full image Plane
 		Graphics g = bs.getDrawGraphics();
+
 		g.setColor(Color.green);
-		g.fillRect(0, 0, WIDTH, HEIGHT);
+
+		g.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
 
 		//Call Handler to render all gameObjects
 		handler.render(g);
@@ -109,15 +101,15 @@ public class Game extends Canvas implements Runnable{
 
 	private void addNewTile(String name){
 
-		int validrange = getScreenheight();
+		int validRange = Menu.getScreenheight();
 
-		Tile t = new Tile(name, (int) ( rangefinder.getNextPosition() * validrange ));
+		Tile t = new Tile(name, (int) ( rangefinder.getNextPosition() * validRange ));
 		handler.addObject(t);
 	}
 
 	synchronized void start() {
-		running = true;
 		thread = new Thread(this);
+		running = true;
 		thread.start();
 	}
 
@@ -130,16 +122,8 @@ public class Game extends Canvas implements Runnable{
 		}
 	}
 
-	public static void main(String[] args){
-
-	}
-
 	public Handler getHandler() {
 		return handler;
-	}
-
-	public static int getScreenheight(){
-		return game.getBounds().height - Tile.TILEHEIGHT - Inputline.LINEHEIGHT;
 	}
 
 }

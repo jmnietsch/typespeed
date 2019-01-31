@@ -34,8 +34,6 @@ public class Handler {
 					continue;
 				}
 			}
-
-
 		}
 
 		cleanup(completedObjects);

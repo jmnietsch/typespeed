@@ -58,7 +58,7 @@ class Tile extends GameObject {
 		g.setFont(TILEFONT);
 		g.setColor(Color.magenta);
 
-		g.fillRect(getCurX(), getCurY(), (int)Math.min(length, (Game.WIDTH-x)), TILEHEIGHT);
+		g.fillRect(getCurX(), getCurY(), (int)Math.min(length, (Window.WIDTH-x)), TILEHEIGHT);
 		g.setColor(Color.BLACK);
 
 		//Now draw the String, with a leading space
@@ -66,7 +66,7 @@ class Tile extends GameObject {
 	}
 
 	boolean hasReachedEnd(){
-		return (length > 0 && x > Game.WIDTH);
+		return (length > 0 && x > Window.WIDTH);
 	}
 
     private int getCurX(){
