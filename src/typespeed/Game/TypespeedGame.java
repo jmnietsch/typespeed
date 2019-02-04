@@ -1,25 +1,32 @@
-package typespeed;
+package typespeed.Game;
+
+import typespeed.TypespeedWindow;
+import typespeed.UI.UICounter;
+import typespeed.UI.UIStats;
+import typespeed.Utils.DictionaryService;
+import typespeed.Utils.GraphicUtils;
+import typespeed.Utils.RangefinderService;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 
-public class Game extends Canvas implements Runnable{
+public class TypespeedGame extends Canvas implements Runnable{
 
 	private static final long serialVersionUID = -333377613080388191L;
 
 	private Thread thread;
 	private static boolean running = false;
 
-    private Rangefinder rangefinder;
+    private RangefinderService rangefinderService;
 	private UIStats uistats;
 	private Handler handler;
 
-	Game() {
+	public TypespeedGame() {
 		handler = new Handler(this);
 
-		rangefinder = new Rangefinder();
-		handler.addObject(rangefinder);
+		rangefinderService = new RangefinderService();
+		handler.addObject(rangefinderService);
 
 		uistats = new UIStats();
 		handler.addObject(uistats);
@@ -79,18 +86,13 @@ public class Game extends Canvas implements Runnable{
 
 	private void render() {
 
-		BufferStrategy bs = this.getBufferStrategy();
-		if (bs == null) {
-			this.createBufferStrategy(3);
-			return;
-		}
+        BufferStrategy bs = GraphicUtils.setupRenderEnvironment(this);
+        if (bs == null) return;
 
 		//Define Background over full image Plane
 		Graphics g = bs.getDrawGraphics();
 
-		g.setColor(Color.green);
-
-		g.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
+        GraphicUtils.setBackground(g, Color.green);
 
 		//Call Handler to render all gameObjects
 		handler.render(g);
@@ -100,20 +102,19 @@ public class Game extends Canvas implements Runnable{
 	}
 
 	private void addNewTile(String name){
+		int validRange = TypespeedWindow.getScreenheight();
 
-		int validRange = Menu.getScreenheight();
-
-		Tile t = new Tile(name, (int) ( rangefinder.getNextPosition() * validRange ));
+		Tile t = new Tile(name, (int) ( rangefinderService.getNextPosition() * validRange ));
 		handler.addObject(t);
 	}
 
-	synchronized void start() {
+	public synchronized void start() {
 		thread = new Thread(this);
 		running = true;
 		thread.start();
 	}
 
-	synchronized void stop() {
+    public synchronized void stop() {
 		try {
 			thread.join();
 			running = false;
@@ -125,5 +126,4 @@ public class Game extends Canvas implements Runnable{
 	public Handler getHandler() {
 		return handler;
 	}
-
 }

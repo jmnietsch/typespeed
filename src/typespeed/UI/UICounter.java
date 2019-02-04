@@ -1,4 +1,8 @@
-package typespeed;
+package typespeed.UI;
+
+import typespeed.Game.TypespeedGame;
+import typespeed.Game.GameObject;
+import typespeed.Game.ObjectID;
 
 import java.awt.*;
 import java.time.Instant;
@@ -6,7 +10,7 @@ import java.util.Date;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
-public class UICounter extends GameObject{
+public class UICounter extends GameObject {
 
     private final Date inittime;
     private Date duetime;
@@ -21,7 +25,7 @@ public class UICounter extends GameObject{
         Canvas c = new Canvas();
         FontMetrics fm = c.getFontMetrics(TIMEFONT);
 
-        x = Game.WIDTH - fm.stringWidth("00:00") - 20;
+        x = TypespeedGame.WIDTH - fm.stringWidth("00:00") - 20;
         y = 25;
 
         //Set initial Time Values and the duedate 90 seconds from now.

@@ -1,18 +1,21 @@
-package typespeed;
+package typespeed.Utils;
 
 import org.apache.commons.math3.analysis.function.Gaussian;
+import typespeed.Game.TypespeedGame;
+import typespeed.Game.GameObject;
+import typespeed.Game.ObjectID;
 
 import java.awt.*;
 import java.util.*;
 
 
-public class Rangefinder extends GameObject{
+public class RangefinderService extends GameObject {
     //If True: Display gaussian curves used for cost calculation for next position.
     private static final boolean DEBUG_VISUALIZATION = false;
 
     //The Amount of Random positions, that will be looked at for their cost. The cheapest one will be used.
     private final static int AMOUNT_POSITIONS = 10;
-    private double[] positions = new double[Rangefinder.AMOUNT_POSITIONS];
+    private double[] positions = new double[RangefinderService.AMOUNT_POSITIONS];
 
     //Scales display of gaussian Curves in horizontal direction (for better visibility)
     private static final float DEFAULT_GAUSSIAN_SCALING = 100;
@@ -31,7 +34,7 @@ public class Rangefinder extends GameObject{
     private static final Gaussian defaultGaussian = new Gaussian(0.5, 0.3);
 
 
-    Rangefinder() {
+    public RangefinderService() {
         super(ObjectID.Rangefinder);
 
         randomizePositions();
@@ -76,14 +79,14 @@ public class Rangefinder extends GameObject{
         //Indicate the currently sampled positions
         g.setColor(Color.BLUE);
         for(double d : positions){
-            g.drawRect(0, (int) (Game.HEIGHT * d), 5, 1);
+            g.drawRect(0, (int) (TypespeedGame.HEIGHT * d), 5, 1);
         }
 
         ArrayList<Float> yList = new ArrayList<>();
         ArrayList<Float> xSumList = new ArrayList<>();
 
         int pointsOnCurve = 40;
-        float height = Game.HEIGHT - 60;
+        float height = TypespeedGame.HEIGHT - 60;
         float step = 1.0f / (pointsOnCurve-1);
 
         //Init y points in step between 0 and 1. (Convenient for Gaussian probability)
@@ -185,7 +188,7 @@ public class Rangefinder extends GameObject{
      * Get a randomized 1d position to spawn a new Tile at. The next value will be less likely to get the same spot.
      * @return random Position with not too much correlation with recent previous positions.
      */
-    double getNextPosition(){
+    public double getNextPosition(){
         randomizePositions();
 
         Map<Double, Double> costMap = new HashMap<>();

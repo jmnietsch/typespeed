@@ -1,4 +1,4 @@
-package typespeed;
+package typespeed.Utils;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -223,7 +223,7 @@ public class DictionaryService {
         return DictionaryService.instance;
     }
 
-    static String getRandomString(){
+    public static String getRandomString(){
         float thresholdChance = 0.8f;
         boolean useWords = (getInstance().random.nextFloat() >= thresholdChance);
 

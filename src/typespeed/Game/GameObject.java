@@ -1,4 +1,4 @@
-package typespeed;
+package typespeed.Game;
 
 import java.awt.*;
 

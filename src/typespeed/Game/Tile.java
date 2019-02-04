@@ -1,8 +1,10 @@
-package typespeed;
+package typespeed.Game;
+
+import typespeed.TypespeedWindow;
 
 import java.awt.*;
 
-class Tile extends GameObject {
+public class Tile extends GameObject {
 	//If True: Display gaussian curves used for cost calculation for next position.
 	private static final boolean DEBUG_VISUALIZATION = false;
 
@@ -58,7 +60,7 @@ class Tile extends GameObject {
 		g.setFont(TILEFONT);
 		g.setColor(Color.magenta);
 
-		g.fillRect(getCurX(), getCurY(), (int)Math.min(length, (Window.WIDTH-x)), TILEHEIGHT);
+		g.fillRect(getCurX(), getCurY(), (int)Math.min(length, (TypespeedWindow.WIDTH-x)), TILEHEIGHT);
 		g.setColor(Color.BLACK);
 
 		//Now draw the String, with a leading space
@@ -66,7 +68,7 @@ class Tile extends GameObject {
 	}
 
 	boolean hasReachedEnd(){
-		return (length > 0 && x > Window.WIDTH);
+		return (length > 0 && x > TypespeedWindow.WIDTH);
 	}
 
     private int getCurX(){

@@ -1,4 +1,4 @@
-package typespeed;
+package typespeed.Game;
 
 public enum ObjectID {
 	Tile,

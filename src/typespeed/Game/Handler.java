@@ -1,4 +1,4 @@
-package typespeed;
+package typespeed.Game;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 public class Handler {
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
-	private Game game;
+	private TypespeedGame game;
 
-    public Handler(Game game) {
+    public Handler(TypespeedGame game) {
         this.game = game;
     }
 
@@ -78,7 +78,7 @@ public class Handler {
         return getTiles().size();
     }
 
-    public Game getGame() {
+    public TypespeedGame getGame() {
         return game;
     }
 }
