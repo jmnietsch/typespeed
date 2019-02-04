@@ -26,23 +26,33 @@ public class TypespeedMenu extends Container implements Runnable, MouseListener 
 
         int tileWidth = 200;
 
-        TypespeedMenuItem item = addItem(50, tileWidth, "Test");
-        TypespeedMenuItem item2 = addItem( 130, tileWidth, "Testasdasd");
-
-        item.addMouseListener(this);
-        item2.addMouseListener(this);
-//        this.addMouseListener(this);
+        addItem(50, tileWidth, TypespeedMenuItem.ItemType.NEWGAME);
+        addItem( 130, tileWidth, TypespeedMenuItem.ItemType.OPTIONS);
     }
 
-    private TypespeedMenuItem addItem(int y, int tileWidth, String itemText) {
+    private void addItem(int y, int tileWidth, TypespeedMenuItem.ItemType type) {
         int centeredX = this.getWidth() / 2;
-        TypespeedMenuItem item = new TypespeedMenuItem(new Rectangle(centeredX - (tileWidth/2), y, tileWidth, TypespeedMenuItem.ITEMHEIGHT), itemText);
+
+        TypespeedMenuItem item;
+
+        switch (type){
+            default:
+            case DEFAULT:
+            case NEWGAME:
+                item = new NewGameMenuItem(this, new Rectangle(centeredX - (tileWidth/2), y, tileWidth, TypespeedMenuItem.ITEMHEIGHT));
+                break;
+//            case OPTIONS:
+//                break;
+        }
+
         itemList.add(item);
         this.add(item);
-        return item;
+
+        item.addMouseListener(this);
+
     }
 
-    private void startNewGame(){
+    public void startNewGame(){
         TypespeedGame game = new TypespeedGame();
         TypespeedWindow.setGame(game);
     }
@@ -55,30 +65,34 @@ public class TypespeedMenu extends Container implements Runnable, MouseListener 
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        saySomething("Mouse clicked (# of clicks: "
+                + e.getClickCount() + ")", e);
+
+        if( e.getSource() instanceof TypespeedMenuItem){
+            TypespeedMenuItem source = (TypespeedMenuItem) e.getSource();
+            source.onAction();
+        }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        Object source = e.getSource();
-        if( source instanceof TypespeedMenuItem){
-            ((TypespeedMenuItem) source).setColor(Color.GREEN);
-            ((TypespeedMenuItem) source).repaint();
+        if( e.getSource() instanceof TypespeedMenuItem){
+            TypespeedMenuItem source = (TypespeedMenuItem) e.getSource();
+            source.onMouseEntered();
         }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        Object source = e.getSource();
-        if( source instanceof TypespeedMenuItem){
-            ((TypespeedMenuItem) source).setColor(Color.RED);
-            ((TypespeedMenuItem) source).repaint();
+        if( e.getSource() instanceof TypespeedMenuItem){
+            TypespeedMenuItem source = (TypespeedMenuItem) e.getSource();
+            source.onMouseExited();
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        saySomething("Mouse clicked (# of clicks: "
-                + e.getClickCount() + ")", e);
+
     }
 
     private void saySomething(String eventDescription, MouseEvent e) {

@@ -2,9 +2,17 @@ package typespeed.Menu;
 
 import java.awt.*;
 
-public class TypespeedMenuItem extends Canvas {
+public abstract class TypespeedMenuItem extends Canvas {
 
-    private String text;
+    public enum ItemType {
+        DEFAULT,
+        NEWGAME,
+        OPTIONS
+    }
+
+    protected String text;
+    protected final ItemType menuType;
+    protected final TypespeedMenu menu;
 
     private Color color = Color.RED;
     public Color getColor() {
@@ -20,8 +28,14 @@ public class TypespeedMenuItem extends Canvas {
     public static final int ITEMHEIGHT = 50;
     private static Color TEXTCOLOR = Color.BLACK;
 
-    public TypespeedMenuItem(Rectangle area, String text) {
+    public TypespeedMenuItem(TypespeedMenu typespeedMenu, Rectangle area, String text) {
+        this(typespeedMenu, area, text, ItemType.DEFAULT);
+    }
+
+    public TypespeedMenuItem(TypespeedMenu typespeedMenu, Rectangle area, String text, ItemType menuType) {
         this.text = text;
+        this.menuType = menuType;
+        this.menu = typespeedMenu;
 
         this.setBounds(area);
         this.setSize(area.getSize());
@@ -40,10 +54,7 @@ public class TypespeedMenuItem extends Canvas {
 
         //Now draw the String, with a leading space
         g.setColor(TEXTCOLOR);
-
-        FontMetrics fm = this.getFontMetrics(this.getFont());
         int centeredHeight = this.getHeight() + getFont().getSize();
-
 
         g.drawString(text, getCenteredTextpos(), centeredHeight / 2);
     }
@@ -51,10 +62,35 @@ public class TypespeedMenuItem extends Canvas {
     private int getCenteredTextpos(){
         FontMetrics fm = this.getFontMetrics(this.getFont());
 
-        int textwith = fm.stringWidth(text);
-        int pos = (this.getWidth() - textwith) / 2;
+        int textWidth = fm.stringWidth(text);
+        int pos = (this.getWidth() - textWidth) / 2;
 
         return pos;
     }
 
+    //----------------------- Hover Action -----------------------------//
+
+    public void onMouseEntered(){
+        this.setColor(Color.GREEN);
+        this.repaint();
+    }
+
+    public void onMouseExited(){
+        this.setColor(Color.RED);
+        this.repaint();
+    }
+
+    public abstract void onAction();
+}
+
+
+class NewGameMenuItem extends TypespeedMenuItem {
+    public NewGameMenuItem(TypespeedMenu typespeedMenu, Rectangle area) {
+        super(typespeedMenu, area, "New Game", ItemType.NEWGAME);
+    }
+
+    @Override
+    public void onAction() {
+        this.menu.startNewGame();
+    }
 }

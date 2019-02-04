@@ -66,6 +66,7 @@ public class TypespeedWindow extends JFrame {
 
 		window.add(menu);
 		window.addMouseListener(menu);
+
 		menu.start();
 	}
 
@@ -74,6 +75,7 @@ public class TypespeedWindow extends JFrame {
 
 		window.menu = menu;
 		addMenu(menu);
+		menu.requestFocus();
 	}
 
 	public static void addGame(TypespeedGame game){
@@ -89,6 +91,7 @@ public class TypespeedWindow extends JFrame {
 
 		window.game = game;
 		addGame(game);
+		game.requestFocus();
 	}
 
 	public static int getScreenheight(){
