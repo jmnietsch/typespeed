@@ -38,7 +38,7 @@ public class Tile extends GameObject {
 		length = fm.stringWidth(" " + text + " ");
 
 		//Set Id Value. Update counter
-		tileId = counter++;
+		tileId = getNextTileId();
 
 		speedX = 0.5f;
 		y = posY;
@@ -46,6 +46,10 @@ public class Tile extends GameObject {
 		resetSolved();
 
 //		System.out.println("Create " + toString() + " at posY " + posY);
+	}
+
+	private synchronized int getNextTileId() {
+		return counter++;
 	}
 
 	@Override
