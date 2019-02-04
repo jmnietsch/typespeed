@@ -42,9 +42,24 @@ public class Handler {
 	}
 
 	public synchronized void render(Graphics g){
+		ArrayList<GameObject> copyOfObjects = new ArrayList<>(this.gameObjects);
 
-		for(GameObject game : gameObjects){
-			game.render(g);
+		int zIndex = 0;
+		while(copyOfObjects.size() > 0){
+
+			//int index = 0;
+			for (GameObject game : gameObjects) {
+
+				if (copyOfObjects.contains(game)) {
+
+					if (game.getZLayer() < zIndex) {
+						game.render(g);
+						copyOfObjects.remove(game);
+					}
+				}
+			}
+
+			zIndex++;
 		}
     }
 

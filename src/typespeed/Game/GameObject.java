@@ -49,6 +49,11 @@ public abstract class GameObject {
 		return id;
 	}
 
+	public int getZLayer() {
+    	return -1;
+	}
+
+
 	public abstract void tick();
 	public abstract void render(Graphics g);
 

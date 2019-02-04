@@ -1,11 +1,10 @@
 package typespeed.UI;
 
-import typespeed.Game.GameObject;
 import typespeed.Game.ObjectID;
 
 import java.awt.*;
 
-public class UIStats extends GameObject {
+public class UIStats extends UIObject {
 
     private static final Font FPSFONT = new Font("Arial", Font.PLAIN, 10);
 

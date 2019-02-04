@@ -1,8 +1,7 @@
 package typespeed.UI;
 
-import typespeed.Game.TypespeedGame;
-import typespeed.Game.GameObject;
 import typespeed.Game.ObjectID;
+import typespeed.TypespeedWindow;
 
 import java.awt.*;
 import java.time.Instant;
@@ -10,11 +9,13 @@ import java.util.Date;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
-public class UICounter extends GameObject {
+public class UICounter extends UIObject {
 
     private final Date inittime;
     private Date duetime;
     private Date timenow;
+
+    private boolean stopGame = false;
 
     private static final Font TIMEFONT = new Font("Arial", Font.BOLD, 24);
 
@@ -25,7 +26,7 @@ public class UICounter extends GameObject {
         Canvas c = new Canvas();
         FontMetrics fm = c.getFontMetrics(TIMEFONT);
 
-        x = TypespeedGame.WIDTH - fm.stringWidth("00:00") - 20;
+        x = TypespeedWindow.WIDTH - fm.stringWidth("00:00") - 20;
         y = 25;
 
         //Set initial Time Values and the duedate 90 seconds from now.
@@ -33,18 +34,21 @@ public class UICounter extends GameObject {
 
         duetime = new Date();
         timenow = new Date();
-        duetime.setTime(Date.from(inittime.toInstant().plus(90, SECONDS)).getTime());
+        duetime.setTime(Date.from(inittime.toInstant().plus(30, SECONDS)).getTime());
     }
 
     @Override
     public void tick() {
         timenow = new Date();
+
+        if(stopGame){
+            TypespeedWindow.getGame().stop();
+        }
     }
 
     @Override
     public void render(Graphics g) {
-        long diff = duetime.getTime() - timenow.getTime();
-        diff /= 1000;
+        long diff = getRemainingTime();
 
         long sec = diff % 60;
         long min = ( diff-sec )/60;
@@ -53,5 +57,13 @@ public class UICounter extends GameObject {
         g.setColor(Color.RED);
         g.setFont(TIMEFONT);
         g.drawString(time, (int)x, (int)y);
+
+        if(getRemainingTime() <= 0){
+            stopGame = true;
+        }
+    }
+
+    private long getRemainingTime() {
+        return Math.round((duetime.getTime() - timenow.getTime()) / 1000.0d);
     }
 }

@@ -98,4 +98,8 @@ public class TypespeedWindow extends JFrame {
 		return window.getComponent(0).getBounds().height - Inputline.LINEHEIGHT - Tile.TILEHEIGHT;
 		//Fixme: getComponent(0) is not nice. Do something else. eg save Canvas of game instance
 	}
+
+    public static TypespeedGame getGame() {
+	    return window.game;
+    }
 }
